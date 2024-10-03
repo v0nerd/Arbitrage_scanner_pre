@@ -1,0 +1,83 @@
+(sqlite3.IntegrityError) UNIQUE constraint failed: currency.pair, currency.exchange_from, currency.exchange_to
+[SQL: INSERT INTO currency (pair, exchange_from, exchange_to, price_from, price_to, volume, time_from, profit) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('XNO/USDT', 'HTX', 'Binance', 1.0380584463481637, 1.0412592132854472, 617580.8900000001, '2024-08-24 16:37:53', 0.3083416881336234)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)     
+Job "update_run (trigger: interval[0:07:00], next run at: 2024-08-24 12:46:20 EDT)" raised an exception
+Traceback (most recent call last):
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2118, in _exec_insertmany_context
+    dialect.do_execute(
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.IntegrityError: UNIQUE constraint failed: currency.pair, 
+currency.exchange_from, currency.exchange_to
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\apscheduler\executors\base_py3.py", line 30, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Arbitrage_testnet\miner\app\main.py", line 85, in update_run
+    await update_records(db=db)
+  File "D:\Arbitrage_testnet\miner\app\utils.py", line 170, in update_records
+    raise e
+  File "D:\Arbitrage_testnet\miner\app\utils.py", line 159, in update_records
+    await crud.currency.batch_update(
+  File "D:\Arbitrage_testnet\miner\app\crud\crud_currency.py", line 132, in batch_update
+    raise e
+  File "D:\Arbitrage_testnet\miner\app\crud\crud_currency.py", line 129, in batch_update
+    db.commit()
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2028, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4352, in flush
+    self._flush(objects)
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4487, in _flush
+    with util.safe_reraise():
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4448, in _flush
+    flush_context.execute()
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1143, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1418, in execute
+    return meth(
+           ^^^^^
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1844, in _execute_context
+    return self._exec_insertmany_context(dialect, context)       
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^       
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2126, in _exec_insertmany_context
+    self._handle_dbapi_exception(
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2118, in _exec_insertmany_context
+    dialect.do_execute(
+  File "D:\Arbitrage_testnet\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: currency.pair, currency.exchange_from, currency.exchange_to
+[SQL: INSERT INTO currency (pair, exchange_from, exchange_to, price_from, price_to, volume, time_from, profit) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('XNO/USDT', 'HTX', 'Binance', 1.0380584463481637, 1.0412592132854472, 617580.8900000001, '2024-08-24 16:37:53', 0.3083416881336234)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) 

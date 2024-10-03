@@ -1,0 +1,12 @@
+pydantic
+pydantic_settings
+fastapi
+uvicorn
+poetry
+alembic
+sqlalchemy
+tenacity
+aiosqlite
+apscheduler
+Jinja2
+pytz

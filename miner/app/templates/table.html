@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="icon" href="https://img.icons8.com/ios/452/currency-exchange.png"> <!-- Replace with your favicon path -->
+    <title>Arbitrage Scanner Data Table</title>
+    <style>
+        th {
+            cursor: pointer;
+        }
+
+        /* Additional styling for table */
+        .table-container {
+            backdrop-filter: blur(5px);
+            border-radius: 1rem;
+        }
+
+        /* Custom hover effect for table rows */
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+            /* Light white background on hover */
+        }
+
+        /* Animation for text colors */
+        @keyframes colorChange {
+            0% {
+                color: #ff6666;
+            }
+
+            25% {
+                color: #66ff66;
+            }
+
+            50% {
+                color: #6666ff;
+            }
+
+            75% {
+                color: #ffff66;
+            }
+
+            100% {
+                color: #ff66ff;
+            }
+        }
+
+        /* Animation for font styles */
+        @keyframes fontChange {
+            0% {
+                font-family: 'Comic Sans MS', cursive, sans-serif;
+            }
+
+            25% {
+                font-family: 'Courier New', Courier, monospace;
+            }
+
+            50% {
+                font-family: 'Georgia', serif;
+            }
+
+            75% {
+                font-family: 'Tahoma', Geneva, sans-serif;
+            }
+
+            100% {
+                font-family: 'Verdana', Geneva, sans-serif;
+            }
+        }
+
+        .dynamic-text {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .george {
+            animation: colorChange 5s infinite, fontChange 10s infinite;
+        }
+
+        .arbitrage {
+            animation: colorChange 7s infinite, fontChange 12s infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 p-6">
+    <div class="container mx-auto">
+        <h1 class="dynamic-text">
+            <span class="george">George's</span>
+            <span class="arbitrage">Arbitrage Screener</span>
+        </h1>
+
+        <!-- Search and Profit Filter Container -->
+        <div class="mb-4 flex flex-col sm:flex-row items-center justify-between">
+            <input type="text" id="searchInput" placeholder="Search by coin, exchange..."
+                class="mb-4 sm:mb-0 p-2 border border-gray-300 rounded w-full sm:w-1/2 transition duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+            <div class="w-full ml-2 sm:w-1/2 flex items-center">
+                <label for="profitRange" class="mr-2 text-sm text-gray-700">Profit Range (%):</label>
+                <input type="range" id="profitRange" min="0" max="100" value="0" step="1" class="w-full">
+                <span id="profitRangeValue" class="ml-2 text-sm text-gray-700">0%</span>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-lg shadow table-container">
+            <table class="min-w-full bg-white border border-gray-300 rounded-lg">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="p-3 border-b border-gray-300 hover:bg-gray-700 transition duration-150"
+                            onclick="sortTable(0)">Buy Exchange</th>
+                        <th class="p-3 border-b border-gray-300 hover:bg-gray-700 transition duration-150"
+                            onclick="sortTable(1)">Sell Exchange</th>
+                        <th class="p-3 border-b border-gray-300 hover:bg-gray-700 transition duration-150"
+                            onclick="sortTable(2)">Coin</th>
+                        <th class="p-3 border-b border-gray-300 hover:bg-gray-700 transition duration-150"
+                            onclick="sortTable(3)">Buy Price($)</th>
+                        <th class="p-3 border-b border-gray-300 hover:bg-gray-700 transition duration-150"
+                            onclick="sortTable(4)">Sell Price($)</th>
+                        <th class="p-3 border-b border-gray-300 hover:bg-gray-700 transition duration-150"
+                            onclick="sortTable(5)">Volume(24h)</th>
+                        <th class="p-3 border-b border-gray-300 hover:bg-gray-700 transition duration-150"
+                            onclick="sortTable(6)">Lifetime</th>
+                        <th class="p-3 border-b border-gray-300 hover:bg-gray-700 transition duration-150"
+                            onclick="sortTable(7)">Profit(%)</th>
+                    </tr>
+                </thead>
+                <tbody id="currencyTable" class="text-center">
+                    {% for item in data %}
+                    <tr class="hover:bg-gray-200 transition duration-150 ease-in-out">
+                        <td class="p-3 border-b border-gray-200">{{ item.exchange_from }}</td>
+                        <td class="p-3 border-b border-gray-200">{{ item.exchange_to }}</td>
+                        <td class="p-3 border-b border-gray-200">{{ item.pair }}</td>
+                        <td class="p-3 border-b border-gray-200">{{ item.price_from }}</td>
+                        <td class="p-3 border-b border-gray-200">{{ item.price_to }}</td>
+                        <td class="p-3 border-b border-gray-200">{{ item.volume }}</td>
+                        <td class="p-3 border-b border-gray-200">{{ item.elapsed_time }}</td>
+                        <td class="p-3 border-b border-gray-200 profit-column">{{ item.profit }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex justify-between items-center mt-4">
+            <span class="text-sm text-gray-600">Showing 1 to {{ data|length }} of {{ data|length }} entries</span>
+        </div>
+    </div>
+
+    <script>
+        // Sort table function
+        function sortTable(columnIndex) {
+            const table = document.getElementById("currencyTable");
+            const rows = Array.from(table.rows);
+            const isAscending = table.dataset.sortOrder === "asc";
+            table.dataset.sortOrder = isAscending ? "desc" : "asc";
+
+            rows.sort((a, b) => {
+                const aText = a.cells[columnIndex].innerText;
+                const bText = b.cells[columnIndex].innerText;
+
+                return isAscending
+                    ? aText.localeCompare(bText, undefined, { numeric: true })
+                    : bText.localeCompare(aText, undefined, { numeric: true });
+            });
+
+            // Clear the table and re-append the sorted rows
+            while (table.firstChild) {
+                table.removeChild(table.firstChild);
+            }
+            rows.forEach(row => table.appendChild(row));
+        }
+
+        // Search function
+        document.getElementById("searchInput").addEventListener("input", function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll("#currencyTable tr");
+
+            rows.forEach(row => {
+                const cells = Array.from(row.cells);
+                const matches = cells.some(cell =>
+                    cell.textContent.toLowerCase().includes(searchTerm)
+                );
+                row.style.display = matches ? "" : "none";
+            });
+        });
+
+        // Profit range filter
+        document.getElementById("profitRange").addEventListener("input", function () {
+            const profitThreshold = parseInt(this.value);
+            document.getElementById("profitRangeValue").textContent = profitThreshold + "%";
+            const rows = document.querySelectorAll("#currencyTable tr");
+
+            rows.forEach(row => {
+                const profit = parseFloat(row.querySelector(".profit-column").innerText);
+                row.style.display = profit >= profitThreshold ? "" : "none";
+            });
+        });
+    </script>
+</body>
+
+</html>
