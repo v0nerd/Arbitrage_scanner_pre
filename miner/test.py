@@ -5,7 +5,7 @@ from datetime import datetime
 def get_usdt_pairs():
     # Get exchanges data from CoinPaprika
     exchanges_url = "https://api.coinpaprika.com/v1/exchanges"
-    exchanges_response = requests.get(exchanges_url)
+    exchanges_response = requests.get(exchanges_url, timeout=60)
 
     if exchanges_response.status_code != 200:
         print("Error fetching exchanges data")
@@ -29,7 +29,7 @@ def get_usdt_pairs():
             markets_url = (
                 f"https://api.coinpaprika.com/v1/exchanges/{exchange['id']}/markets"
             )
-            markets_response = requests.get(markets_url)
+            markets_response = requests.get(markets_url, timeout=60)
 
             if markets_response.status_code != 200:
                 print(f"Error fetching markets for {exchange['name']}")
