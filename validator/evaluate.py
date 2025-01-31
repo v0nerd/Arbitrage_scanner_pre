@@ -31,7 +31,7 @@ class Miner:
 
         url = self.miner_url
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=60)
 
         if response.status_code == 200:
             print("Successfully connected to the miner")
@@ -49,7 +49,7 @@ def check_update_frequency(miner_update_url, interval_seconds=30, iterations=20)
     last_timestamp = None
 
     for _ in range(iterations):
-        response = requests.get(url)
+        response = requests.get(url, timeout=60)
         data = response.json()
         current_timestamp = data.get("last_updated")
         print(f"Update at {current_timestamp}")
